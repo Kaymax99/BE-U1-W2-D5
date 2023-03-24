@@ -1,11 +1,17 @@
-package catalogo;
+package itemsList;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.commons.io.FileUtils;
+
 
 public class Library {
 	
@@ -29,12 +35,23 @@ public class Library {
 //		library.findByAuthor("Doge"); // esempio ricerca per autore fallita
 		// Non sono soddisfatto di questa ricerca, bisogna scrivere il nome esatto ovviamente, se mi rimane
 		// tempo la aggiusto
+		try {
+			library.saveLibrary();
+			library.loadLibrary();
+			
+			List<Book> searchTolkien = library.findByAuthor("J. R. R. Tolkien");
+//			searchTolkien.forEach(element -> System.out.println(element.toString()));
+		} catch (IOException e){
+			System.out.println("There was an error while trying reading/writing: " + e);
+		}
 	}
+	
+	private static final String PATH = "c:\\Users\\brink\\Desktop\\Epicode\\Backend\\U1\\w2d5\\src\\library.txt";
 	
 	private Map<Integer, ReadableItem> itemList;
 	
 	public Library() {
-		itemList = new HashMap<Integer, ReadableItem>();
+		this.itemList = new HashMap<Integer, ReadableItem>();
 	}
 	
 	public void addToLibrary(ReadableItem item) {
@@ -79,13 +96,43 @@ public class Library {
 		List<Book> list = itemList.values().stream().filter(element -> element instanceof Book)
 				.map(elem -> (Book) elem).filter(element -> author == element.getAuthor()).collect(Collectors.toList());
 		
-		if (list.size() > 0) {
-			System.out.println("Items released by given Author:");
-		 	list.forEach(elem -> System.out.println(elem.toString()));
-		} else {
-			System.out.println("No item found in Library by given Author");
-		}
 		return list;
-
+	}
+	
+	public void saveLibrary() throws IOException {
+		String initialString = "" ;
+		
+		for (ReadableItem elem : itemList.values()) {
+			if (initialString.length() != 0) {
+				initialString += "#";
+			}
+			if (elem instanceof Book) {
+				initialString += Book.toFile((Book) elem);
+			} else if (elem instanceof Magazine){
+				initialString += Magazine.toFile((Magazine) elem);
+			}
+		}
+		
+		File f = new File(PATH);
+		FileUtils.writeStringToFile(f, initialString, "UTF-8");
+	}
+	
+	public void loadLibrary() throws IOException {
+		this.itemList.clear();
+		
+		File f = new File(PATH);
+		String initialString = FileUtils.readFileToString(f, "UTF-8");
+		List<String> stringToArray = Arrays.asList(initialString.split("#"));
+		
+		for (String elem : stringToArray) {
+			ReadableItem newItem = null;
+			if (elem.startsWith("book")) {
+				newItem = Book.fromFile(elem);
+			} 
+			else if (elem.startsWith("magazine")) {
+				newItem = Magazine.fromFile(elem);
+			} 
+			this.itemList.put(newItem.getISBN(), newItem);
+		}
 	}
 }

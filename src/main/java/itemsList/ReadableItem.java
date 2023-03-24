@@ -1,25 +1,25 @@
-package catalogo;
+package itemsList;
 
 public class ReadableItem {
 	
-	private int ISBN;
-	private String title;
-	private int yearOfRelease;
-	private int numberOfPage;
+	protected int isbn;
+	protected String title;
+	protected int yearOfRelease;
+	protected int numberOfPage;
 	
-	public ReadableItem (int code, String tit, int year, int pages) {
-		this.ISBN = code;
-		this.title = tit;
+	public ReadableItem (int isbn, String title, int year, int pages) {
+		this.isbn = isbn;
+		this.title = title;
 		this.yearOfRelease = year;
 		this.numberOfPage = pages;
 	}
 
 	public int getISBN() {
-		return ISBN;
+		return isbn;
 	}
 
-	public void setISBN(int ISBN) {
-		this.ISBN = ISBN;
+	public void setISBN(int isbn) {
+		this.isbn = isbn;
 	}
 
 	public String getTitle() {

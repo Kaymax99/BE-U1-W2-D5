@@ -1,4 +1,4 @@
-package catalogo;
+package itemsList;
 
 public interface test {
 
