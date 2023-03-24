@@ -23,13 +23,17 @@ public class Library {
 		Book b1 = new Book(123, "The Fellowship of the Ring", 1954, 423, "J. R. R. Tolkien", "Fantasy");
 		Book b2 = new Book(234, "Two Towers", 1954, 423, "J. R. R. Tolkien", "Fantasy");
 		Book b3 = new Book(190, "The way of the Doge", 2023, 999, "Doge", "Life");
+		Book b4 = new Book(235, "Two Towers", 1954, 423, "J. R. R. Tolkien", "Fantasy");
+		Book b5 = new Book(235, "The Hobbit", 1954, 300, "J. R. R. Tolkien", "Fantasy");
 		Magazine m1 = new Magazine(456, "True Tolkien Fans", 2023, 40, Periodicity.MENSILE);
 		
 		library.addToLibrary(b1);
 		library.addToLibrary(b2);
 		library.addToLibrary(b3);
+		library.addToLibrary(b4);
+		library.addToLibrary(b5); // questo fallirà perché esiste già un oggetto con questo ISBN
 		library.addToLibrary(m1);
-//		library.removeFromLibrary(234); // esempio rimozione
+		library.removeFromLibrary(235); // esempio rimozione
 //		library.removeFromLibrary(236); // esempio rimozione fallita per codice non trovato
 //		library.findByYear(1954); // esempio ricerca per anno con successo
 //		library.findByYear(2000); // esempio ricerca per anno fallita
@@ -71,8 +75,14 @@ public class Library {
 	}
 	
 	public void addToLibrary(ReadableItem item) {
-		itemList.put(item.getISBN(), item);
-		System.out.println("Added element: " + item.getTitle());
+		// Verifico che non esista già un item con l'ISBN che ci viene dato
+		if (findByCode(item.getISBN()) == null) {
+			itemList.put(item.getISBN(), item);
+			System.out.println("Added element: " + item.getTitle());			
+		} else {
+			System.out.println("Could not add " + item.getTitle() + ", there is already an item in the library with the given ISBN!");
+		}
+		
 	}
 	
 	public void removeFromLibrary (int code) {
