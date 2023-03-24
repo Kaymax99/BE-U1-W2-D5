@@ -22,10 +22,12 @@ public class Library {
 		
 		Book b1 = new Book(123, "The Fellowship of the Ring", 1954, 423, "J. R. R. Tolkien", "Fantasy");
 		Book b2 = new Book(234, "Two Towers", 1954, 423, "J. R. R. Tolkien", "Fantasy");
-		Magazine m1 = new Magazine(456, "True Tolkien Fans", 1954, 40, Periodicity.MENSILE);
+		Book b3 = new Book(190, "The way of the Doge", 2023, 999, "Doge", "Life");
+		Magazine m1 = new Magazine(456, "True Tolkien Fans", 2023, 40, Periodicity.MENSILE);
 		
 		library.addToLibrary(b1);
 		library.addToLibrary(b2);
+		library.addToLibrary(b3);
 		library.addToLibrary(m1);
 //		library.removeFromLibrary(234); // esempio rimozione
 //		library.removeFromLibrary(236); // esempio rimozione fallita per codice non trovato
@@ -35,18 +37,32 @@ public class Library {
 //		library.findByAuthor("Doge"); // esempio ricerca per autore fallita
 		// Non sono soddisfatto di questa ricerca, bisogna scrivere il nome esatto ovviamente, se mi rimane
 		// tempo la aggiusto
+		
 		try {
 			library.saveLibrary();
 			library.loadLibrary();
 			
+			System.out.println("\nSearching code 234: ");
+			System.out.println(library.findByCode(234));
+			
+			System.out.println("\nSearch by author J. R. R. Tolkien: ");
 			List<Book> searchTolkien = library.findByAuthor("J. R. R. Tolkien");
-//			searchTolkien.forEach(element -> System.out.println(element.toString()));
+			searchTolkien.forEach(element -> System.out.println(element.toString()));
+			
+			System.out.println("\nSearch by year 2023: ");
+			List<ReadableItem> recentItems = library.findByYear(2023);
+			recentItems.forEach(element -> System.out.println(element.toString()));
+			
 		} catch (IOException e){
 			System.out.println("There was an error while trying reading/writing: " + e);
 		}
 	}
 	
 	private static final String PATH = "c:\\Users\\brink\\Desktop\\Epicode\\Backend\\U1\\w2d5\\src\\library.txt";
+	
+	public List<ReadableItem> test() {
+		return itemList.values().stream().collect(Collectors.toList());
+	}
 	
 	private Map<Integer, ReadableItem> itemList;
 	
@@ -56,7 +72,7 @@ public class Library {
 	
 	public void addToLibrary(ReadableItem item) {
 		itemList.put(item.getISBN(), item);
-		System.out.println("Added element: " + item.toString());
+		System.out.println("Added element: " + item.getTitle());
 	}
 	
 	public void removeFromLibrary (int code) {
@@ -71,30 +87,30 @@ public class Library {
 	
 	public ReadableItem findByCode (int code) {
 		ReadableItem foundItem = itemList.get(code);
-		if (foundItem != null) {
-			System.out.println("Found element with given code: " + foundItem);
-		} else {
-			System.out.println("No item found with given ISBN in Library.");
-		}
-// Note to self: metto il return nel caso dovesse servire usare l'oggetto trovato, in caso lo tolgo.
-		return itemList.get(code);
+		//Initial sysouts to test methods
+//		if (foundItem != null) {
+//			System.out.println("Found element with given code: " + foundItem);
+//		} else {
+//			System.out.println("No item found with given ISBN in Library.");
+//		}
+		return foundItem;
 	}
 
 	public List<ReadableItem> findByYear(int year) {
 		List<ReadableItem> list = itemList.values().stream().filter(element -> year == element.getYearOfRelease()).collect(Collectors.toList());
-		 if (list.size() > 0) {
-			System.out.println("Items released in given year:");
-		 	list.forEach(elem -> System.out.println(elem.toString()));
-		 } else {
-			 System.out.println("No item found in Library with release year given.");
-		 }
-		// Stessa cosa qui che ho fatto su findByCode
+		//Initial sysouts to test methods
+//		 if (list.size() > 0) {
+//			System.out.println("Items released in given year:");
+//		 	list.forEach(elem -> System.out.println(elem.toString()));
+//		 } else {
+//			 System.out.println("No item found in Library with release year given.");
+//		 }
 		return list;
 	}
 	
 	public List<Book> findByAuthor(String author) {
 		List<Book> list = itemList.values().stream().filter(element -> element instanceof Book)
-				.map(elem -> (Book) elem).filter(element -> author == element.getAuthor()).collect(Collectors.toList());
+				.map(elem -> (Book) elem).filter(element -> author.equals(element.getAuthor()) ).collect(Collectors.toList());
 		
 		return list;
 	}
